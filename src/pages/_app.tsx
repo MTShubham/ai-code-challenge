@@ -1,12 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.css';
-import { SessionProvider } from 'next-auth/react';
+import { ToasterProvider } from '../components/Toaster';
+import Header from '../components/Header';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider session={pageProps.session}>
+    <div>
+      <Header />
       <Component {...pageProps} />
-    </SessionProvider>
+    </div>
   );
 }
 
