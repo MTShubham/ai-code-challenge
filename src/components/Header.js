@@ -24,21 +24,15 @@ const Header = () => {
       <NavbarToggler onClick={toggle} />
       <div className='d-flex flex-row-reverse mr-2'>
       <Collapse isOpen={isOpen} navbar>
-      <Nav  navbar>
+      <Nav navbar>
           <NavItem>
-            <Link href="/" passHref>
-              <NavLink className={router.pathname === '/' ? 'active' : ''}>Dashboard</NavLink>
-            </Link>
+              <NavLink href="/" className={router.pathname === '/' ? 'active' : ''}>Dashboard</NavLink>
           </NavItem>
           <NavItem>
-            <Link href="/expense" passHref>
-              <NavLink className={router.pathname === '/expense' ? 'active' : ''}>Expenses</NavLink>
-            </Link>
+              <NavLink href="/expense" className={router.pathname === '/expense' ? 'active' : ''}>Expenses</NavLink>
           </NavItem>
           <NavItem>
-            <Link href="/categories" passHref>
-              <NavLink className={router.pathname === '/categories' ? 'active' : ''}>Categories</NavLink>
-            </Link>
+              <NavLink href="/categories" className={router.pathname === '/categories' ? 'active' : ''}>Categories</NavLink>
           </NavItem>
         </Nav>
       </Collapse>
