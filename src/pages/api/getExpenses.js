@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   try {
     // Replace with the actual API endpoint you want to call
-    const response = await axios.get(`http://192.168.3.122:8081/api/v1/expenses?UserId=${userID}&PageSize=${pageSize}&SortBy=Date&SortOrder=desc`);
+    const response = await axios.get(`http://192.168.3.122:8081/v1/expenses?UserId=${userID}&PageSize=${pageSize}&SortBy=Date&SortOrder=desc`);
     const data = response.data;
     console.log('data', data);
 

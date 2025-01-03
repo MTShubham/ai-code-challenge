@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.method === 'POST') {
     console.log({ reqBody: req.body });
     
-    const response = await fetch('http://192.168.3.122:8081/api/v1/expenses', {
+    const response = await fetch('http://192.168.3.122:8081/v1/expenses', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

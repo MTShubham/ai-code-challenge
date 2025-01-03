@@ -27,7 +27,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ initialCategories }) => {
   const handleAddCategory = async () => {
     console.log({ newCategory })
     try {
-      const response = await fetch('http://192.168.3.122:8081/api/category', {
+      const response = await fetch('http://192.168.3.122:8081/v1/category', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ initialCategories }) => {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const response = await axios.get('http://192.168.3.122:8081/api/category');
+    const response = await axios.get('http://192.168.3.122:8081/v1/category');
     return {
       props: {
         initialCategories: response?.data,

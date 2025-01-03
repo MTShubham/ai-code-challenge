@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
   try {
     // Replace with your actual backend API endpoint
-    const response = await axios.post('http://192.168.3.122:8081/authentication/signup', {
+    const response = await axios.post('http://192.168.3.122:8081/v1/authentication/signup', {
       name,
       email,
       password,

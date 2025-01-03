@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Table, Alert, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap';
 import styles from './ListAllExpenses.module.css';
 import DateRangePicker from '../DateRangePicker/DateRangePicker';
+import ClientTableComponent from '../ClientSideTable';
 
 const ListAllExpenses = ({ error, expenses }) => {
   const [modal, setModal] = useState(false);
@@ -86,31 +87,34 @@ const ListAllExpenses = ({ error, expenses }) => {
       {error ? (
         <Alert color="danger">{error}</Alert>
       ) : (
-        <Table striped responsive>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expenses?.map((expense, index) => (
-              <tr key={index}>
-                <td>{expense?.date}</td>
-                <td>{expense?.category}</td>
-                <td>{expense?.description}</td>
-                <td>{expense?.amount}</td>
-                <td>
-                  <Button color="warning" onClick={() => handleEdit(expense)}>Edit</Button>
-                  <Button color="danger" onClick={() => handleDeleteClick(expense)} style={{marginLeft: '15px'}}>Delete</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <ClientTableComponent  data={expenses} columns={[ { Header: 'Date', accessor: 'date' },
+          { Header: 'Category', accessor: 'category' },
+          { Header: 'Description', accessor: 'description' }, { Header: 'Amount', accessor: 'amount' }, { Header: 'Action', Actions: '' }]}> </ClientTableComponent>
+        // <Table striped responsive>
+        //   <thead>
+        //     <tr>
+        //       <th>Date</th>
+        //       <th>Category</th>
+        //       <th>Description</th>
+        //       <th>Amount</th>
+        //       <th>Actions</th>
+        //     </tr>
+        //   </thead>
+        //   <tbody>
+        //     {expenses?.map((expense, index) => (
+        //       <tr key={index}>
+        //         <td>{expense?.date}</td>
+        //         <td>{expense?.category}</td>
+        //         <td>{expense?.description}</td>
+        //         <td>{expense?.amount}</td>
+        //         <td>
+        //           <Button color="warning" onClick={() => handleEdit(expense)}>Edit</Button>
+        //           <Button color="danger" onClick={() => handleDeleteClick(expense)} style={{marginLeft: '15px'}}>Delete</Button>
+        //         </td>
+        //       </tr>
+        //     ))}
+        //   </tbody>
+        // </Table>
       )}
 
       {selectedExpense && (

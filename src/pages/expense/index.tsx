@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Container, Table, Alert, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { GetServerSideProps } from 'next';
 import styles from './expense.module.css';
 import ListAllExpenses from '../../components/ListAllExpenses';
+import axios from 'axios';
 
 interface Expense {
   date: string;
@@ -14,9 +15,10 @@ interface Expense {
 interface ExpensePageProps {
   expenses: Expense[];
   error?: string;
+  categories: { id: number; name: string }[];
 }
 
-const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error, categories }) => {
+const ExpensePage: React.FC<ExpensePageProps> = ({ categories }) => {
   const [newExpense, setNewExpense] = useState<Expense>({
     date: '',
     amount: 0,
@@ -24,6 +26,23 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error, categories }
     description: '',
   });
   const [amountError, setAmountError] = useState<string | null>(null);
+
+  const [expenses, setExpenses] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const expensesResponse = await axios.get('/api/getExpenses?userID=1&pageSize=500');
+        const expensesData = expensesResponse.data;
+        setExpenses(expensesData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -49,7 +68,7 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error, categories }
     }
 
     try {
-      const response = await fetch('/expenses', {
+      const response = await fetch('/api/addExcpenses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +92,7 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error, categories }
     <div className={styles.container}>
       <Row>
         <Col xl="8" md="12">
-          <ListAllExpenses expenses={expenses} error={error} />
+          <ListAllExpenses error={null} expenses={expenses} />
         </Col>
         <Col md="1"></Col>
         <Col xl="2" md="12">
@@ -137,17 +156,10 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error, categories }
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  let expenses: Expense[] = [], error = '', categories = [];
+  let categories = [];
 
   try {
-    const res = await fetch('https://api.example.com/expenses?limit=5');
-    expenses = await res.json();
-  } catch (error) {
-    error = error;
-  }
-
-  try {
-    const response = await fetch('http://192.168.3.122:8081/api/category');
+    const response = await fetch('http://192.168.3.122:8081/v1/category');
     categories = await response.json();
   } catch (error) {
     error = error;
@@ -155,17 +167,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   return {
     props: {
-      expenses: [
-        { date: '2025-01-01', amount: 50, category: 'Groceries', description: 'Bought vegetables and fruits' },
-        { date: '2025-01-02', amount: 20, category: 'Transport', description: 'Bus fare' },
-        { date: '2025-01-03', amount: 100, category: 'Entertainment', description: 'Movie tickets' },
-        { date: '2025-01-04', amount: 200, category: 'Shopping', description: 'Clothes shopping' },
-        { date: '2025-01-05', amount: 150, category: 'Utilities', description: 'Electricity bill' }
-      ],
+      expenses: [],
       categories,
-      // expenses: [],
-      error,
-    },
+      },
   };
 };
 

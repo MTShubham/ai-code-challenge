@@ -13,7 +13,7 @@ export default NextAuth({
       async authorize(credentials) {
         try {
           // Replace with your actual backend API endpoint
-          const response = await axios.post('http://192.168.3.122:8081/authentication/login', {
+          const response = await axios.post('http://192.168.3.122:8081/v1/authentication/login', {
             email: credentials.email,
             password: credentials.password,
           });
