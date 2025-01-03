@@ -5,12 +5,26 @@ import randomColorGenerator from '../utils/randomColorGenerator';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChartComponent = ({ data, labels }) => {
+const groupByCategory = (expenses) => {
+  return expenses.reduce((acc, expense) => {
+    const { category, amount } = expense;
+    if (!acc[category]) {
+      acc[category] = 0;
+    }
+    acc[category] += amount;
+    return acc;
+  }, {});
+};
+
+const PieChartComponent = ({data}) => {
+  const groupedData = groupByCategory(data);
+  const labels = Object.keys(groupedData);
+  const amounts = Object.values(groupedData);
   const chartData = {
     labels: labels,
     datasets: [
       {
-        data: data,
+        data: amounts,
         backgroundColor: randomColorGenerator(data.length),
         
       },

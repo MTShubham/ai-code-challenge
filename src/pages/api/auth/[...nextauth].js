@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
-import bcrypt from 'bcrypt';
 
 export default NextAuth({
   providers: [
@@ -14,14 +13,15 @@ export default NextAuth({
       async authorize(credentials) {
         try {
           // Replace with your actual backend API endpoint
-          const response = await axios.post('https://api.example.com/login', {
+          const response = await axios.post('http://192.168.3.122:8081/authentication/login', {
             email: credentials.email,
             password: credentials.password,
           });
 
           const user = response.data;
+          console.log('user', user);
 
-          if (user && bcrypt.compareSync(credentials.password, user.password)) {
+          if (user) {
             return user;
           } else {
             return null;
@@ -44,12 +44,14 @@ export default NextAuth({
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.name = user.name;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.email = token.email;
+      session.user.name = token.name;
       return session;
     },
   },

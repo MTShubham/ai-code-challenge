@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 
 const SignIn = () => {
@@ -68,6 +69,11 @@ const SignIn = () => {
             </FormGroup>
             <Button color="primary" type="submit">Sign In</Button>
           </Form>
+          <div className="mt-3">
+            <p>
+              Don't have an account? <Link href="/sign-up" style={{ color: 'blue' }}>Sign Up</Link>
+            </p>
+          </div>
         </Col>
       </Row>
     </Container>

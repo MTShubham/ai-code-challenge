@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Alert,
-  Container,
-  Row,
-  Col,
-} from 'reactstrap';
+import axios from 'axios';
+import Link from 'next/link';
+import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -18,9 +10,9 @@ const SignUp = () => {
     password: '',
     confirmPassword: '',
   });
-
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,35 +55,24 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setSuccessMessage('Sign up successful!');
-        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-      } else {
-        const errorData = await response.json();
-        setErrors({ apiError: errorData.message || 'Failed to sign up' });
-      }
+      const response = await axios.post('/api/signup', formData);
+      setSuccessMessage('User signed up successfully!');
+      // Redirect to login page or show success message
+      window.location.href = '/sign-in';
     } catch (error) {
-      setErrors({ apiError: 'An error occurred. Please try again later.' });
+      console.error('Error signing up:', error);
+      setError('Failed to sign up');
     }
   };
 
   return (
-    <Container>
+    <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col md={6}>
-          <h2 className="text-center my-4">Sign Up</h2>
+        <Col md="6">
+          <h1>Sign Up</h1>
+          {successMessage && <Alert color="success">{successMessage}</Alert>}
+          {error && <Alert color="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
-            {errors.apiError && <Alert color="danger">{errors.apiError}</Alert>}
-            {successMessage && <Alert color="success">{successMessage}</Alert>}
-
             <FormGroup>
               <Label for="name">Name</Label>
               <Input
@@ -100,11 +81,10 @@ const SignUp = () => {
                 id="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter your name"
+                required
               />
-              {errors.name && <Alert color="danger" className="mt-2">{errors.name}</Alert>}
+              {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
             </FormGroup>
-
             <FormGroup>
               <Label for="email">Email</Label>
               <Input
@@ -113,11 +93,10 @@ const SignUp = () => {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your email"
+                required
               />
-              {errors.email && <Alert color="danger" className="mt-2">{errors.email}</Alert>}
+              {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
             </FormGroup>
-
             <FormGroup>
               <Label for="password">Password</Label>
               <Input
@@ -126,11 +105,10 @@ const SignUp = () => {
                 id="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                required
               />
-              {errors.password && <Alert color="danger" className="mt-2">{errors.password}</Alert>}
+              {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
             </FormGroup>
-
             <FormGroup>
               <Label for="confirmPassword">Confirm Password</Label>
               <Input
@@ -139,19 +117,17 @@ const SignUp = () => {
                 id="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm your password"
+                required
               />
-              {errors.confirmPassword && (
-                <Alert color="danger" className="mt-2">
-                  {errors.confirmPassword}
-                </Alert>
-              )}
+              {errors.confirmPassword && <p style={{ color: 'red' }}>{errors.confirmPassword}</p>}
             </FormGroup>
-
-            <Button color="primary" block type="submit">
-              Sign Up
-            </Button>
+            <Button color="primary" type="submit">Sign Up</Button>
           </Form>
+          <div className="mt-3">
+            <p>
+              Already have an account? <Link href="/sign-in" style={{ color: 'blue' }}>Sign In</Link>
+            </p>
+          </div>
         </Col>
       </Row>
     </Container>

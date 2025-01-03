@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import axios from 'axios';
 
 export default async function handler(req, res) {
@@ -17,13 +16,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Replace with your actual backend API endpoint
-    const response = await axios.post('https://api.example.com/signup', {
+    const response = await axios.post('http://192.168.3.122:8081/authentication/signup', {
       name,
       email,
-      password: hashedPassword,
+      password,
     });
 
     res.status(200).json(response.data);
