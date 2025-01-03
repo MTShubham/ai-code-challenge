@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { Container, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
+import { Container, Row, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
 import axios from 'axios';
 import styles from './category.module.css';
 
@@ -20,13 +20,27 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ initialCategories }) => {
   const [modal, setModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  console.log({ categories })
+
   const toggleModal = () => setModal(!modal);
 
   const handleAddCategory = async () => {
+    console.log({ newCategory })
     try {
-      const response = await axios.post('/api/categories', { name: newCategory });
-      setCategories([...categories, response.data]);
-      setNewCategory('');
+      const response = await fetch('http://192.168.3.122:8081/api/category', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: newCategory }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCategories([...categories, data]);
+        setNewCategory('');
+      } else {
+        setError('Failed to add category');
+      }
     } catch (error) {
       setError('Failed to add category');
     }
@@ -65,39 +79,45 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ initialCategories }) => {
 
       {error && <Alert color="danger">{error}</Alert>}
 
-      <Table striped responsive>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories?.map((category) => (
-            <tr key={category?.id}>
-              <td>{category?.name}</td>
-              <td>
-                <Button color="warning" onClick={() => handleEditClick(category)}>Edit</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <Form inline onSubmit={(e) => { e.preventDefault(); handleAddCategory(); }}>
-        <FormGroup>
-          <Label for="newCategory" className="mr-sm-2">New Category</Label>
-          <Input
-            type="text"
-            name="newCategory"
-            id="newCategory"
-            value={newCategory}
-            onChange={handleInputChange}
-            className="mr-sm-2"
-          />
-        </FormGroup>
-        <Button color="primary" type="submit">Add</Button>
-      </Form>
+      <Row>
+        <Col md="8">
+          <Table striped responsive>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories?.map((category) => (
+                <tr key={category?.id}>
+                  <td>{category?.name}</td>
+                  <td>
+                    <Button color="warning" onClick={() => handleEditClick(category)}>Edit</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Col>
+        <Col md="1"></Col>
+        <Col md="3">
+          <Form inline onSubmit={(e) => { e.preventDefault(); handleAddCategory(); }}>
+            <FormGroup>
+              <Label for="newCategory" className={styles.addCategory}>Add New Category</Label>
+              <Input
+                type="text"
+                name="newCategory"
+                id="newCategory"
+                value={newCategory}
+                onChange={handleInputChange}
+                className="mr-sm-2"
+              />
+            </FormGroup>
+            <Button color="primary" type="submit">Add</Button>
+          </Form>
+        </Col>
+      </Row>
 
       {selectedCategory && (
         <Modal isOpen={modal} toggle={toggleModal}>
@@ -129,7 +149,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ initialCategories }) => {
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const response = await axios.get('http://192.168.3.122:8081/api/category');
-    console.log({response})
     return {
       props: {
         initialCategories: response?.data,

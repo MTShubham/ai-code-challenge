@@ -16,7 +16,7 @@ interface ExpensePageProps {
   error?: string;
 }
 
-const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error }) => {
+const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error, categories }) => {
   const [newExpense, setNewExpense] = useState<Expense>({
     date: '',
     amount: 0,
@@ -42,54 +42,42 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('New Expense:', newExpense);
-  
+
+    if (newExpense?.amount <= 0) {
+      setAmountError('Amount should be more than 0');
+      return;
+    }
+
     try {
-      const response = await fetch('https://api.example.com/expenses', {
+      const response = await fetch('/expenses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newExpense),
       });
-  
+
+      console.log({response})
       if (!response.ok) {
         throw new Error('Failed to add expense');
       }
-  
+
       const result = await response.json();
       console.log('Expense added successfully:', result);
-      // Optionally, you can update the state to reflect the new expense
     } catch (error) {
       console.error('Error adding expense:', error);
     }
   };
 
-  const isFormValid = () => {
-    return (
-      newExpense.date !== '' &&
-      newExpense.amount > 0 &&
-      newExpense.category !== '' &&
-      newExpense.description !== ''
-    );
-  };
-
-  const onChange = () => {
-    
-  }
-
-  const onEdit = () => {
-    
-  }
-
   return (
     <div className={styles.container}>
       <Row>
-        <Col md="8">
-          <ListAllExpenses expenses={expenses} error={error} onChange={onChange} onEdit={onEdit} />
+        <Col xl="8" md="12">
+          <ListAllExpenses expenses={expenses} error={error} />
         </Col>
         <Col md="1"></Col>
-        <Col md="2">
-          <h3 className={styles.listHeading}>Add Expense</h3>
+        <Col xl="2" md="12">
+          <h3 className={styles.addExpenseListHeading}>Add Expense</h3>
           <div>
             <Form onSubmit={handleSubmit}>
               <FormGroup>
@@ -105,12 +93,19 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error }) => {
               <FormGroup>
                 <Label for="category">Category</Label>
                 <Input
-                  type="text"
+                  type="select"
                   name="category"
                   id="category"
                   value={newExpense.category}
                   onChange={handleInputChange}
-                />
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </Input>
               </FormGroup>
               <FormGroup>
                 <Label for="description">Description</Label>
@@ -132,7 +127,7 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error }) => {
                   onChange={handleInputChange}
                 />
               </FormGroup>
-              <Button type="submit" color="primary" disabled={!isFormValid}>Add Expense</Button>
+              <Button type="submit" color="primary">Add Expense</Button>
             </Form>
           </div>
         </Col>
@@ -142,32 +137,37 @@ const ExpensePage: React.FC<ExpensePageProps> = ({ expenses, error }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
+  let expenses: Expense[] = [], error = '', categories = [];
+
   try {
     const res = await fetch('https://api.example.com/expenses?limit=5');
-    if (!res.ok) {
-      throw new Error('Failed to fetch expenses');
-    }
-    const expenses: Expense[] = await res.json();
-    return {
-      props: {
-        expenses,
-      },
-    };
+    expenses = await res.json();
   } catch (error) {
-    return {
-      props: {
-        expenses: [
-            { date: '2025-01-01', amount: 50, category: 'Groceries', description: 'Bought vegetables and fruits' },
-            { date: '2025-01-02', amount: 20, category: 'Transport', description: 'Bus fare' },
-            { date: '2025-01-03', amount: 100, category: 'Entertainment', description: 'Movie tickets' },
-            { date: '2025-01-04', amount: 200, category: 'Shopping', description: 'Clothes shopping' },
-            { date: '2025-01-05', amount: 150, category: 'Utilities', description: 'Electricity bill' }
-          ],
-        // expenses: [],
-        // error: error.message,
-      },
-    };
+    error = error;
   }
+
+  try {
+    const response = await fetch('http://192.168.3.122:8081/api/category');
+    categories = await response.json();
+  } catch (error) {
+    error = error;
+  }
+
+  return {
+    props: {
+      expenses: [
+        { date: '2025-01-01', amount: 50, category: 'Groceries', description: 'Bought vegetables and fruits' },
+        { date: '2025-01-02', amount: 20, category: 'Transport', description: 'Bus fare' },
+        { date: '2025-01-03', amount: 100, category: 'Entertainment', description: 'Movie tickets' },
+        { date: '2025-01-04', amount: 200, category: 'Shopping', description: 'Clothes shopping' },
+        { date: '2025-01-05', amount: 150, category: 'Utilities', description: 'Electricity bill' }
+      ],
+      categories,
+      // expenses: [],
+      error,
+    },
+  };
 };
 
 export default ExpensePage;
+

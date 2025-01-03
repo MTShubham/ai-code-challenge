@@ -1,7 +1,17 @@
 .container {
     padding: 30px 60px;
+    @media (max-width: 1200px) {
+        padding: 30px;
+    }
 }
 
 .listHeading {
     padding-bottom: 40px;
 } 
+
+.addExpenseListHeading {
+    padding-bottom: 40px;
+    @media (max-width: 1200px) {
+        padding-top: 60px;
+    }
+}

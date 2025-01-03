@@ -3,7 +3,7 @@ import { Table, Alert, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form,
 import styles from './ListAllExpenses.module.css';
 import DateRangePicker from '../DateRangePicker/DateRangePicker';
 
-const ListAllExpenses = ({ error, expenses, onChange, onEdit, onDelete }) => {
+const ListAllExpenses = ({ error, expenses }) => {
   const [modal, setModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
