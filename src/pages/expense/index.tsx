@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Col, Table, Alert, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Row, Col, Container, Table, Alert, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { GetServerSideProps } from 'next';
 import styles from './expense.module.css';
 import ListAllExpenses from '../../components/ListAllExpenses';

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Form, FormGroup, Label, Button } from 'reactstrap';
-import DatePicker from 'react-datepicker';
+import { Form, FormGroup, Label, Button, Input } from 'reactstrap';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './DateRangePicker.module.css';
 
@@ -10,36 +9,29 @@ const DateRangePicker = ({ onDateRangeChange }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onDateRangeChange({ startDate, endDate });
+    if(startDate && endDate && startDate < endDate) {
+      onDateRangeChange({ startDate, endDate });
+    }
   };
 
   return (
     <Form onSubmit={handleSubmit} className={styles.container}>
       <FormGroup>
         <Label for="startDate">Start Date</Label>
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-          selectsStart
-          startDate={startDate}
-          endDate={endDate}
-          dateFormat="yyyy/MM/dd"
-          className="form-control"
+        <Input
+          name="startDate"
           id="startDate"
+          type="date"
+          onChange={(event) => setStartDate(event.target.value)}
         />
       </FormGroup>
       <FormGroup>
         <Label for="endDate">End Date</Label>
-        <DatePicker
-          selected={endDate}
-          onChange={(date) => setEndDate(date)}
-          selectsEnd
-          startDate={startDate}
-          endDate={endDate}
-          minDate={startDate}
-          dateFormat="yyyy/MM/dd"
-          className="form-control"
+        <Input
+          name="endDate"
           id="endDate"
+          type="date"
+          onChange={(event) => setEndDate(event.target.value)}
         />
       </FormGroup>
       <Button type="submit" color="primary">Apply</Button>
