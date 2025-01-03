@@ -31,8 +31,8 @@ const Header = () => {
             </Link>
           </NavItem>
           <NavItem>
-            <Link href="/expenses" passHref>
-              <NavLink className={router.pathname === '/expenses' ? 'active' : ''}>Expenses</NavLink>
+            <Link href="/expense" passHref>
+              <NavLink className={router.pathname === '/expense' ? 'active' : ''}>Expenses</NavLink>
             </Link>
           </NavItem>
           <NavItem>
